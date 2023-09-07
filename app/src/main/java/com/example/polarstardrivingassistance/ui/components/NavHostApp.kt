@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -56,7 +57,7 @@ fun NavHostApp(
 
     val navController = rememberNavController()
 
-    CompositionLocalProvider( LocalUserViewModel provides UserViewModel()) {
+    CompositionLocalProvider( LocalUserViewModel provides UserViewModel(LocalContext.current)) {
 
         val userViewModel = LocalUserViewModel.current
 

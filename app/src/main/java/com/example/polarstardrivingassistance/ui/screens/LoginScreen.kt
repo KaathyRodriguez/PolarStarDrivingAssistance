@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -24,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.polarstardrivingassistance.R
 import com.example.polarstardrivingassistance.compositionLocal.LocalUserViewModel
 import com.example.polarstardrivingassistance.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,13 +65,7 @@ fun LoginScreen(
 
     val userViewModel = LocalUserViewModel.current
 
-    var userName by remember {
-        mutableStateOf("")
-    }
-
-    var password by remember {
-        mutableStateOf("")
-    }
+    val coroutineScope = rememberCoroutineScope()
 
     var showPassword by remember {
         mutableStateOf(false)
@@ -134,8 +132,8 @@ fun LoginScreen(
             ) {
                 
                 TextField(
-                    value = userName,
-                    onValueChange = { userName = it },
+                    value = userViewModel.userName,
+                    onValueChange = { userViewModel.userName = it },
                     singleLine = true,
                     leadingIcon = {
                         Icon(
@@ -162,11 +160,12 @@ fun LoginScreen(
                         textColor = Color.White,
                         disabledTextColor = Color.White
                     ),
+                    enabled = !userViewModel.loading
                 )
 
                 TextField(
-                    value = password,
-                    onValueChange = { password = it },
+                    value = userViewModel.password,
+                    onValueChange = { userViewModel.password = it },
                     singleLine = true,
                     leadingIcon = {
                         Icon(
@@ -205,19 +204,33 @@ fun LoginScreen(
                         cursorColor = Color.LightGray,
                         textColor = Color.White,
                         disabledTextColor = Color.White
-                    )
+                    ),
+                    enabled = !userViewModel.loading
                 )
                 
                 Spacer(modifier = Modifier.padding(8.dp))
                 
-                TextButton(onClick = {
-                    userViewModel.login(onClose = onClose)
-                }) {
-                    Text(
-                        text = "SIGN IN",
-                        color = Color.White
-                    )
+                TextButton(
+                    onClick = {
+                    coroutineScope.launch {
+                        userViewModel.login(onClose = onClose)
+                    }
+                },
+                    enabled = !userViewModel.loading
+                ) {
+                    Row {
+                        Text(
+                            text = "SIGN IN",
+                            color = Color.White
+                        )
+                        if (userViewModel.loading) {
+                            CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                        }
+                    }
                 }
+
+                Text(text = userViewModel.error, color = Color.Red, fontSize = 13.sp)
+                
                 TextButton(onClick = { /*TODO*/ }) {
                     Text(
                         text = "Don't have an account? Click to register now",
