@@ -1,15 +1,13 @@
 package com.example.polarstardrivingassistance.model
 
-import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.create
 
 object Network {
 
     //mokck 数据请求 url
-    private const val baseUrl = ""
+    private const val baseUrl = "https://console-mock.apipost.cn/mock/"
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)

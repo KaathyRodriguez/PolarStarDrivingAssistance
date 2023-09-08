@@ -1,10 +1,12 @@
 package com.example.polarstardrivingassistance.viewmodel
 
 import android.content.Context
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.polarstardrivingassistance.model.service.UserInfoManager
@@ -58,16 +60,15 @@ class UserViewModel(context: Context): ViewModel() {
     suspend fun login(onClose: () -> Unit) {
         error = ""
         loading = true
-//        val res = userService.signIn(userName,md5(password))
-//        if (res.code == 0 && res.data != null) {
-//            userInfo = res.data
-////            userInfoManager.save("user001")
-//            onClose()
-//        } else {
-//            //失败
-//            error = res.message
-//        }
-        onClose()
+        val res = userService.signIn(userName,md5(password))
+        if (res.code == 0 && res.data != null) {
+            userInfo = res.data
+//            userInfoManager.save("user001")
+            onClose()
+        } else {
+            //失败
+            error = res.message
+        }
         loading = false
     }
 
